@@ -1,10 +1,5 @@
-import lxml.etree as ET
-import os
-import xmlschema
 import pytest
 
-HERE = os.path.dirname(__file__)
-XSD_PATH = os.path.join(HERE, "..", "dictionary.xsd")
 
 VALID_VERSIONS = [
     "3.0",
@@ -23,13 +18,8 @@ INVALID_VERSIONS = [
 ]
 
 
-@pytest.fixture(scope='module')
-def schema():
-    return xmlschema.XMLSchema(os.path.join(os.path.dirname(HERE), 'dictionary.xsd'))
-
-
 def make_xml(version_text):
-    return f'''<?xml version="1.0"?>
+    return f"""<?xml version="1.0"?>
 <IngeniaDictionary>
   <Header>
     <Version>{version_text}</Version>
@@ -47,16 +37,16 @@ def make_xml(version_text):
     </Devices>
   </Body>
   <DriveImage></DriveImage>
-</IngeniaDictionary>'''
+</IngeniaDictionary>"""
 
 
-@pytest.mark.parametrize('v', VALID_VERSIONS)
-def test_valid_versions(schema, v):
-    xml = make_xml(v)
-    assert schema.is_valid(xml), f'{v} should be valid: {schema.errors}'
+@pytest.mark.parametrize("version", VALID_VERSIONS)
+def test_valid_versions(schema, version: str):
+    xml = make_xml(version)
+    assert schema.is_valid(xml), f"{version} should be valid: {schema.errors}"
 
 
-@pytest.mark.parametrize('v', INVALID_VERSIONS)
-def test_invalid_versions(schema, v):
-    xml = make_xml(v)
-    assert not schema.is_valid(xml), f'{v} should be invalid: {schema.errors}'
+@pytest.mark.parametrize("version", INVALID_VERSIONS)
+def test_invalid_versions(schema, version: str):
+    xml = make_xml(version)
+    assert not schema.is_valid(xml), f"{version} should be invalid: {schema.errors}"
