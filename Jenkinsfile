@@ -15,7 +15,12 @@ pipeline {
         }
         stage('Run tests') {
             steps {
-                sh "poetry run pytest"
+                sh "poetry run pytest --junitxml=pytest_reports/junit.xml"
+            }
+            post {
+                always {
+                    junit "pytest_reports/junit.xml"
+                }
             }
         }
     }
