@@ -154,7 +154,7 @@
   </xs:complexType>
 
   <!-- definition of simple elements -->
-  <xs:element name="Version" type="xs:string" fixed="3.0"/>
+  <xs:element name="Version" type="xs:string"/>
   <xs:element name="DefaultLanguage" type="xs:string"/>
 
   <!-- definition of complex elements -->
