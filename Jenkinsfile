@@ -4,18 +4,18 @@ pipeline {
     agent {
         docker {
             label 'worker'
-            image 'ingeniacontainers.azurecr.io/docker-python:1.4'
+            image 'ingeniacontainers.azurecr.io/docker-python:1.6'
         }
     }
     stages {
         stage('Install dependencies') {
             steps {
-                sh "$python -m pip install xmlschema==3.2.1"
+                sh "poetry install --with tests"
             }
         }
-        stage('Validate XCF files') {
+        stage('Run tests') {
             steps {
-                sh "$python validate_example_files.py"
+                sh "poetry run pytest"
             }
         }
     }
