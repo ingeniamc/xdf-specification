@@ -1,9 +1,12 @@
-import os
+from pathlib import Path
 import xmlschema
 import pytest
 
-HERE = os.path.dirname(__file__)
-XSD_PATH = os.path.abspath(os.path.join(HERE, '..', 'dictionary.xsd'))
+
+HERE = Path(__file__).parent
+REPO_PATH = HERE / '..'
+XSD_PATH = REPO_PATH / 'dictionary.xsd'
+EXAMPLE_FILES_DIR = REPO_PATH / 'example_files'
 
 
 @pytest.fixture(scope='session')

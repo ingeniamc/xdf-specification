@@ -1,18 +1,13 @@
-import os
+from pathlib import Path
 import pytest
 
-HERE = os.path.dirname(__file__)
-RESOURCES_DIR = os.path.abspath(os.path.join(HERE, "..", "example_files"))
+from tests.conftest import EXAMPLE_FILES_DIR
 
 
 def collect_example_files():
     """Return a list of XML files under the resources directory (recursive)."""
-    if not os.path.isdir(RESOURCES_DIR):
-        return []
-    matches = []
-    for root, dirs, files in os.walk(RESOURCES_DIR):
-        for fn in files:
-            matches.append(os.path.join(root, fn))
+    example_dir = Path(EXAMPLE_FILES_DIR)
+    matches = [str(p) for p in example_dir.rglob('*') if p.is_file()]
     assert len(matches) > 0, "No example files found in resources directory."
     return matches
 
@@ -26,5 +21,3 @@ def test_example_file_valid(schema, example_path):
     assert schema.is_valid(example_path), (
         f"{example_path} is not valid: {schema.errors}"
     )
-
-
