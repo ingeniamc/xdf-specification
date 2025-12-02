@@ -7,7 +7,7 @@ from tests.conftest import EXAMPLE_FILES_DIR
 def collect_example_files():
     """Return a list of XML files under the resources directory (recursive)."""
     example_dir = Path(EXAMPLE_FILES_DIR)
-    matches = [str(p) for p in example_dir.rglob('*') if p.is_file()]
+    matches = [str(p) for p in example_dir.rglob('*.xdf3') if p.is_file()]
     assert len(matches) > 0, "No example files found in resources directory."
     return matches
 
