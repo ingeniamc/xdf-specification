@@ -1,0 +1,490 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <!-- definition of simpleTypes -->
+  <xs:simpleType name="address_type">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="NVM_NONE"/>
+      <xs:enumeration value="NVM"/>
+      <xs:enumeration value="NVM_LOCK"/>
+      <xs:enumeration value="NVM_INDIRECT"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="access">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="r"/>
+      <xs:enumeration value="w"/>
+      <xs:enumeration value="rw"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="dtype">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="u8"/>
+      <xs:enumeration value="s8"/>
+      <xs:enumeration value="u16"/>
+      <xs:enumeration value="s16"/>
+      <xs:enumeration value="u32"/>
+      <xs:enumeration value="s32"/>
+      <xs:enumeration value="u64"/>
+      <xs:enumeration value="s64"/>
+      <xs:enumeration value="float"/>
+      <xs:enumeration value="str"/>
+      <xs:enumeration value="bit"/>
+      <xs:enumeration value="byteArray512"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="cyclic">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="CYCLIC_RX"/>
+      <xs:enumeration value="CYCLIC_TX"/>
+      <xs:enumeration value="CYCLIC_RXTX"/>
+      <xs:enumeration value="CONFIG"/>
+      <xs:enumeration value="CYCLIC_SI"/>
+      <xs:enumeration value="CYCLIC_SO"/>
+      <xs:enumeration value="CYCLIC_SISO"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="address">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="0x[0-9A-F]{4}"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="index">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="0x[0-9A-F]{4}"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="uid">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[0-9A-Z_]+"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="default">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="([0-9a-f][0-9a-f])+"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="error_id">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="0x[0-9A-F]{1,8}"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="range">
+    <xs:union>
+      <xs:simpleType>
+        <xs:restriction base='xs:int'/>
+      </xs:simpleType>
+      <xs:simpleType>
+        <xs:restriction base='xs:float'/>
+      </xs:simpleType>
+    </xs:union>
+  </xs:simpleType>
+  <xs:simpleType name="subnodeType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Communication"/>
+      <xs:enumeration value="Motion"/>
+      <xs:enumeration value="Safety"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="canOpenObjectDatatype">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="VAR"/>
+      <xs:enumeration value="ARRAY"/>
+      <xs:enumeration value="RECORD"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="versionType">
+    <xs:restriction base="xs:string">
+      <!-- Examples allowed: 3.0, 3.1, 3.12, 3.1.2 -->
+      <xs:pattern value="3\.[0-9]+(\.[0-9]+)?"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- definition of complexType -->
+  <xs:complexType name="BaseDevice">
+    <xs:sequence minOccurs="0">
+      <xs:element ref="Subnodes"/>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="firmwareVersion"/>
+    <xs:attribute type="xs:int" name="ProductCode"/>
+    <xs:attribute type="xs:string" name="PartNumber"/>
+    <xs:attribute type="xs:int" name="RevisionNumber"/>
+  </xs:complexType>
+
+  <xs:complexType name="ETHDevice">
+    <xs:complexContent>
+      <xs:extension base="BaseDevice">
+        <xs:sequence>
+          <xs:element ref="MCBRegisters"/>
+          <xs:element ref="Errors"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="CANDevice">
+    <xs:complexContent>
+      <xs:extension base="BaseDevice">
+        <xs:sequence>
+          <xs:element ref="CANopenObjects"/>
+          <xs:element ref="Errors"/>
+          <xs:element ref="SafetyPDOs" minOccurs="0"/>
+          <xs:element ref="SafetyModules" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="ECATDevice">
+    <xs:complexContent>
+      <xs:extension base="BaseDevice">
+        <xs:sequence>
+          <xs:element ref="CANopenObjects"/>
+          <xs:element ref="Errors"/>
+          <xs:element ref="SafetyPDOs" minOccurs="0"/>
+          <xs:element ref="SafetyModules" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="EoEDevice">
+    <xs:complexContent>
+      <xs:extension base="BaseDevice">
+        <xs:sequence>
+          <xs:element ref="MCBRegisters"/>
+          <xs:element ref="Errors"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- definition of simple elements -->
+  <xs:element name="Version" type="versionType" default="3.1"/>
+  <xs:element name="DefaultLanguage" type="xs:string"/>
+
+  <!-- definition of complex elements -->
+
+  <!-- Range elements -->
+  <xs:element name="Range">
+    <xs:complexType>
+      <xs:attribute type="range" name="min"/>
+      <xs:attribute type="range" name="max"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- MonDistV3 elements -->
+  <xs:element name="MonDistV3">
+    <xs:complexType>
+      <xs:attribute type="address" name="address" use="required"/>
+      <xs:attribute type="xs:unsignedByte" name="subnode" use="required"/>
+      <xs:attribute type="cyclic" name="cyclic" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- Label elements -->
+  <xs:element name="Label">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute type="xs:string" name="lang" use="required"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Labels">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Label"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- Enum elements -->
+  <xs:element name="Enum">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute type="xs:integer" name="value" use="required"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Enumerations">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Enum" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- BitFields elements -->
+  <xs:element name="BitField">
+    <xs:complexType>
+      <xs:attribute type="xs:string" name="name" use="required"/>
+      <xs:attribute type="xs:int" name="start" use="required"/>
+      <xs:attribute type="xs:int" name="end" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="BitFields">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="BitField" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- Category elements -->
+  <xs:element name="Category">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Labels"/>
+      </xs:sequence>
+      <xs:attribute type="uid" name="id" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Categories">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Category" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- Subnodes elements -->
+  <xs:element name="Subnode">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="subnodeType">
+          <xs:attribute type="xs:unsignedByte" name="index" use="required"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Subnodes">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Subnode" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- CANopenObject elements -->
+  <xs:element name="Subitem">
+    <xs:complexType>
+      <xs:all>
+        <xs:element ref="Labels"/>
+        <xs:element ref="Enumerations" minOccurs="0"/>
+        <xs:element ref="Range" minOccurs="0"/>
+        <xs:element ref="BitFields" minOccurs="0"/>
+        <xs:element ref="MonDistV3" minOccurs="0"/>
+      </xs:all>
+      <xs:attribute type="xs:int" name="subindex" use="required"/>
+      <xs:attribute type="address_type" name="address_type" use="required"/>
+      <xs:attribute type="access" name="access" use="required"/>
+      <xs:attribute type="dtype" name="dtype" use="required"/>
+      <xs:attribute type="uid" name="id" use="optional"/>
+      <xs:attribute type="cyclic" name="pdo_access" use="required"/>
+      <xs:attribute type="xs:string" name="desc" use="optional"/>
+      <xs:attribute type="default" name="default" use="required"/>
+      <xs:attribute type="xs:string" name="cat_id" use="required"/>
+      <xs:attribute type="xs:string" name="units" use="optional"/>
+      <xs:attribute type="xs:boolean" name="is_node_id_dependent" use="optional"/>
+      <xs:attribute type="xs:unsignedByte" name="axis" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Subitems">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Subitem" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="CANopenObject">
+    <xs:complexType>
+      <xs:all>
+        <xs:element ref="Labels"/>
+        <xs:element ref="Subitems"/>
+      </xs:all>
+      <xs:attribute type="index" name="index" use="required"/>
+      <xs:attribute type="canOpenObjectDatatype" name="datatype" use="required"/>
+      <xs:attribute type="xs:unsignedByte" name="axis" use="optional"/>
+      <xs:attribute type="uid" name="id" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="CANopenObjects">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="CANopenObject" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- MCBRegister elements -->
+  <xs:element name="MCBRegister">
+    <xs:complexType>
+      <xs:all>
+        <xs:element ref="Labels"/>
+        <xs:element ref="Enumerations" minOccurs="0"/>
+        <xs:element ref="Range" minOccurs="0"/>
+        <xs:element ref="BitFields" minOccurs="0"/>
+        <xs:element ref="MonDistV3" minOccurs="0"/>
+      </xs:all>
+      <xs:attribute type="address" name="address" use="required"/>
+      <xs:attribute type="xs:unsignedByte" name="subnode" use="required"/>
+      <xs:attribute type="address_type" name="address_type" use="required"/>
+      <xs:attribute type="access" name="access" use="required"/>
+      <xs:attribute type="dtype" name="dtype" use="required"/>
+      <xs:attribute type="uid" name="id" use="optional"/>
+      <xs:attribute type="cyclic" name="pdo_access" use="required"/>
+      <xs:attribute type="xs:string" name="desc" use="optional"/>
+      <xs:attribute type="default" name="default" use="required"/>
+      <xs:attribute type="xs:string" name="cat_id" use="required"/>
+      <xs:attribute type="xs:string" name="units" use="optional"/>
+      <xs:attribute type="xs:unsignedByte" name="axis" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="MCBRegisters">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="MCBRegister" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- Error elements -->
+  <xs:element name="Error">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Labels"/>
+      </xs:sequence>
+      <xs:attribute type="error_id" name="id" use="required"/>
+      <xs:attribute type="xs:string" name="affected_module" use="required"/>
+      <xs:attribute type="xs:string" name="error_type" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Errors">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Error" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- SafetyPDOs elements -->
+  <xs:element name="PDOEntry">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute type="xs:unsignedByte" name="size" use="required"/>
+          <xs:attribute type="xs:unsignedByte" name="subnode" use="optional"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="RPDO">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="PDOEntry" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute type="uid" name="id"/>
+      <xs:attribute type="index" name="index"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="TPDO">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="PDOEntry" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute type="uid" name="id"/>
+      <xs:attribute type="index" name="index"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SafetyPDOs">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="RPDO" maxOccurs="unbounded"/>
+        <xs:element ref="TPDO" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- SafetyModules elements -->
+  <xs:element name="ApplicationParameter">
+    <xs:complexType>
+      <xs:attribute type="uid" name="id" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ApplicationParameters">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="ApplicationParameter" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SafetyModule">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="ApplicationParameters"/>
+      </xs:sequence>
+      <xs:attribute type="xs:boolean" name="uses_sra" use="required"/>
+      <xs:attribute type="xs:string" name="module_ident" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SafetyModules">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="SafetyModule" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- Device elements -->
+  <xs:element name="Devices">
+    <xs:complexType>
+      <xs:all minOccurs="1">
+        <xs:element name="ETHDevice" type="ETHDevice" minOccurs="0"/>
+        <xs:element name="CANDevice" type="CANDevice" minOccurs="0"/>
+        <xs:element name="ECATDevice" type="ECATDevice" minOccurs="0"/>
+        <xs:element name="EoEDevice" type="EoEDevice" minOccurs="0"/>
+      </xs:all>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- IngeniaDictionary elements -->
+  <xs:element name="Header">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Version"/>
+        <xs:element ref="DefaultLanguage"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Body">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Categories"/>
+        <xs:element ref="Devices"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="DriveImage">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute type="xs:string" name="encoding"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="IngeniaDictionary">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Header"/>
+        <xs:element ref="Body"/>
+        <xs:element ref="DriveImage"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
