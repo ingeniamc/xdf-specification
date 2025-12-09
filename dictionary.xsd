@@ -117,7 +117,7 @@
       <xs:extension base="BaseDevice">
         <xs:sequence>
           <xs:element ref="MCBRegisters"/>
-          <xs:element ref="Errors" maxOccurs="1"/>
+          <xs:element ref="Errors"/>
           <xs:element ref="Tables" minOccurs="0"/>
         </xs:sequence>
       </xs:extension>
