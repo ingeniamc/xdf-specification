@@ -164,6 +164,20 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:complexType name="ETHSDCPDevice">
+    <xs:complexContent>
+      <xs:extension base="BaseDevice">
+        <xs:sequence>
+          <xs:element ref="CANopenObjects"/>
+          <xs:element ref="Errors"/>
+          <xs:element ref="Tables" minOccurs="0"/>
+          <xs:element ref="SafetyPDOs" minOccurs="0"/>
+          <xs:element ref="SafetyModules" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <!-- definition of simple elements -->
   <xs:element name="Version" type="versionType" default="3.1"/>
   <xs:element name="DefaultLanguage" type="xs:string"/>
@@ -469,6 +483,7 @@
         <xs:element name="CANDevice" type="CANDevice" minOccurs="0"/>
         <xs:element name="ECATDevice" type="ECATDevice" minOccurs="0"/>
         <xs:element name="EoEDevice" type="EoEDevice" minOccurs="0"/>
+        <xs:element name="ETH-SDCP" type="ETHSDCPDevice" minOccurs="0"/>
       </xs:all>
     </xs:complexType>
   </xs:element>
