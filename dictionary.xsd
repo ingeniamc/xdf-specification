@@ -171,8 +171,6 @@
           <xs:element ref="CANopenObjects"/>
           <xs:element ref="Errors"/>
           <xs:element ref="Tables" minOccurs="0"/>
-          <xs:element ref="SafetyPDOs" minOccurs="0"/>
-          <xs:element ref="SafetyModules" minOccurs="0"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
