@@ -93,6 +93,11 @@
       <xs:enumeration value="RECORD"/>
     </xs:restriction>
   </xs:simpleType>
+  <xs:simpleType name="registerTag">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="events"/>
+    </xs:restriction>
+  </xs:simpleType>
 
   <xs:simpleType name="versionType">
     <xs:restriction base="xs:string">
@@ -288,6 +293,16 @@
     </xs:complexType>
   </xs:element>
 
+  <!-- Register Tags elements -->
+  <xs:element name="Tag" type="registerTag"/>
+  <xs:element name="Tags">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Tag" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
   <!-- CANopenObject elements -->
   <xs:element name="Subitem">
     <xs:complexType>
@@ -297,6 +312,7 @@
         <xs:element ref="Range" minOccurs="0"/>
         <xs:element ref="BitFields" minOccurs="0"/>
         <xs:element ref="MonDistV3" minOccurs="0"/>
+        <xs:element ref="Tags" minOccurs="0"/>
       </xs:all>
       <xs:attribute type="xs:int" name="subindex" use="required"/>
       <xs:attribute type="address_type" name="address_type" use="required"/>
@@ -348,6 +364,7 @@
         <xs:element ref="Range" minOccurs="0"/>
         <xs:element ref="BitFields" minOccurs="0"/>
         <xs:element ref="MonDistV3" minOccurs="0"/>
+        <xs:element ref="Tags" minOccurs="0"/>
       </xs:all>
       <xs:attribute type="address" name="address" use="required"/>
       <xs:attribute type="xs:unsignedByte" name="subnode" use="required"/>
