@@ -93,12 +93,6 @@
       <xs:enumeration value="RECORD"/>
     </xs:restriction>
   </xs:simpleType>
-  <xs:simpleType name="registerTag">
-    <xs:restriction base="xs:string">
-      <xs:enumeration value="events"/>
-    </xs:restriction>
-  </xs:simpleType>
-
   <xs:simpleType name="versionType">
     <xs:restriction base="xs:string">
       <!-- Examples allowed: 3.0, 3.1, 3.12, 3.1.2 -->
@@ -292,7 +286,7 @@
   </xs:element>
 
   <!-- Register Tags elements -->
-  <xs:element name="Tag" type="registerTag"/>
+  <xs:element name="Tag" type="xs:string"/>
   <xs:element name="Tags">
     <xs:complexType>
       <xs:sequence>
